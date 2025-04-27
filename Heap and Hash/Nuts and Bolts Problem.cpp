@@ -84,3 +84,31 @@ cout << "~" << "\n";
 }
 
 // } Driver Code Ends
+
+
+
+
+
+//2nd solution hashing
+
+class Solution {
+  public:
+  unordered_map<char,int> mp;
+
+    void matchPairs(int n, char nuts[], char bolts[]) {
+        // Mapping custom order
+        mp['!'] = 1;
+        mp['#'] = 2;
+        mp['$'] = 3;
+        mp['%'] = 4;
+        mp['&'] = 5;
+        mp['*'] = 6;
+        mp['?'] = 7;
+        mp['@'] = 8;
+        mp['^'] = 9;
+
+        // Sorting nuts and bolts according to the custom order
+        sort(nuts, nuts + n, [this](char& a, char& b) { return mp[a] < mp[b]; });  // Using custom comparator for nuts
+        sort(bolts, bolts + n, [this](char& a, char& b) { return mp[a] < mp[b]; }); // Using custom comparator for bolts
+    }
+};
