@@ -5,6 +5,7 @@ You need to find the first subarray whose sum is equal to the target.
 
 Note: If no such array is possible then, return [-1].
 
+//hashing one will also work for -ve elements whereas sliding window is only for non negative array.
 
 class Solution {
   public:
