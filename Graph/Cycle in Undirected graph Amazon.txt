@@ -1,0 +1,159 @@
+Find a cycle in an undirected Graph. You are given an undirected graph with:
+n vertices numbered from 0 to n-1 (or 1 to n), m edges. The graph is represented as an edge list or adjacency list.
+
+Follow-up Variations Interviewers Ask
+
+Just detect if cycle exists.
+Return the actual cycle path.
+Count number of cycles.
+Detect cycle in disconnected graph.
+if we are given a stream of edges and need to check if the current added edge creates a cycle.
+Use:
+DFS
+BFS
+Union-Find
+
+In undirected graph, while doing DFS:
+If you visit a neighbor that:
+is already visited
+and is NOT the parent
+→ Then cycle exists.
+
+
+
+// Online Java Compiler
+// Use this editor to write, compile and run your Java code online
+import java.util.*;
+class Main {
+    public static void main(String[] args) {
+        Scanner sc= new Scanner(System.in);
+        int n= sc.nextInt();
+        int m= sc.nextInt();
+        List<List<Integer>> adj= new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=0; i<m; i++){
+            int u= sc.nextInt();
+            int v= sc.nextInt();
+            adj.get(u).add(v);
+            adj.get(v).add(u);
+        }
+        boolean[] visited= new boolean[n];
+        int[] parent= new int[n];
+        Arrays.fill(parent,-1);
+        
+        boolean cycleExist= false;
+        for(int i=0; i<n; i++){
+            if(!visited[i]){
+                if(dfs(i,-1,adj,visited,parent)){
+                    cycleExist= true;
+                    break;
+                }
+            }
+        }
+        
+        if(cycleExist) System.out.println("Graph has a cycle");
+        else System.out.println("No cycle");
+        
+    }
+    
+    static boolean dfs(int node,int par,List<List<Integer>> adj,boolean[] visited, int[] parent){
+        visited[node]= true;
+        
+        for(int nei: adj.get(node)){
+            if(!visited[nei]){
+                if(dfs(nei,node,adj,visited,parent)){
+                    return true;
+                }
+            }
+            else if(nei!=par){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+
+
+
+
+Follow-up: Optimize the solution if we are given a stream of edges and need to check if the current added edge creates a cycle.
+
+
+import java.util.*;
+
+class UnionFind {
+
+    int[] parent;
+    int[] rank;
+
+    public UnionFind(int n) {
+        parent = new int[n];
+        rank = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;   // each node is its own parent
+        }
+    }
+
+    // Find with path compression
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    // Returns false if cycle detected
+    public boolean union(int x, int y) {
+
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX == rootY) {
+            return false;  // cycle
+        }
+
+        // Union by rank
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } 
+        else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } 
+        else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+
+        return true;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();  // number of nodes
+        int m = sc.nextInt();  // number of edges
+
+        UnionFind uf = new UnionFind(n);
+
+        for (int i = 0; i < m; i++) {
+
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+
+            if (!uf.union(u, v)) {
+                System.out.println("Cycle created by edge: " + u + " " + v);
+            } else {
+                System.out.println("No cycle after adding: " + u + " " + v);
+            }
+        }
+    }
+}
